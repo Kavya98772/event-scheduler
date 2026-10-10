@@ -1,34 +1,154 @@
 # Event Management & Dynamic Scheduling System
-DBMS course project. **React + Vite → Express REST API → `pg` → PostgreSQL (Neon)**. No ORM: every query is explicit SQL, and the scheduling rules live in the database (constraints, triggers, PL/pgSQL functions, transactions).
 
-## Run it
+A full-stack event management and dynamic scheduling application developed as a DBMS course project. The system manages events, participants, venues, judges, volunteers, and resources while enforcing database-level constraints to prevent scheduling conflicts.
+
+🌐 **Live Demo:** [Event Scheduler](https://event-scheduler-z5hz.onrender.com/schedule)
+
+## 🚀 Features
+
+* **Event Management:** Create, manage, and organize events.
+* **Dynamic Scheduling:** Schedule events with real-time validation and conflict detection.
+* **Conflict Prevention:** Detect overlapping venue bookings, participant clashes, judge and volunteer conflicts, and resource shortages.
+* **Venue Management:** Validate venue availability and capacity before scheduling.
+* **Resource Allocation:** Track available resources and prevent over-allocation.
+* **User Authentication:** Role-based access for administrators, organizers, participants, judges, and volunteers.
+* **Event Registration:** Manage participant registrations while enforcing deadlines and capacity limits.
+* **Database-Driven Validation:** Use PostgreSQL constraints, triggers, stored functions, and transactions to maintain data integrity.
+* **Dashboard & Analytics:** View event statistics, schedules, and resource utilization.
+* **Atomic Scheduling:** Ensure scheduling operations either complete successfully or roll back entirely if a validation fails.
+
+## 🛠️ Tech Stack
+
+| Component             | Technology          |
+| --------------------- | ------------------- |
+| Frontend              | React, Vite         |
+| Backend               | Node.js, Express.js |
+| Database              | PostgreSQL (Neon)   |
+| Database Connectivity | `pg`                |
+| Authentication        | JWT                 |
+| Password Security     | bcrypt              |
+| Database Logic        | SQL, PL/pgSQL       |
+| Deployment            | Render              |
+| Version Control       | Git and GitHub      |
+
+## 🏗️ Architecture
+
+The application follows a three-layer architecture:
+
+**React + Vite → Express REST API → PostgreSQL (Neon)**
+
+* **Frontend:** Provides the interface for event management, scheduling, registration, and analytics.
+* **Backend:** Handles API requests, authentication, business logic, and database operations.
+* **Database:** Enforces scheduling rules using constraints, triggers, stored functions, indexes, and transactions.
+
+The application uses explicit SQL queries through `pg` rather than an ORM.
+
+## 💻 Run Locally
+
+### Prerequisites
+
+* Node.js and npm
+* A PostgreSQL database (Neon is supported)
+* Git
+
+### Installation
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/Kavya98772/event-scheduler.git
+   cd event-scheduler
+   ```
+
+2. Configure the environment:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   Add your database connection string as `DATABASE_URL` and a secure `JWT_SECRET` to the `.env` file.
+
+3. Install dependencies:
+
+   ```bash
+   npm install
+   npm run setup
+   ```
+
+4. Initialize the database:
+
+   ```bash
+   npm run db:setup
+   ```
+
+   **Warning:** Database initialization drops and recreates the project tables. Use a disposable or empty database.
+
+5. Start the development servers:
+
+   ```bash
+   npm run dev
+   ```
+
+   Open the Vite frontend at `http://localhost:5173`.
+
+### Alternative: Run as a Single Application
+
 ```bash
-cp .env.example .env            # set DATABASE_URL (Neon string with ?sslmode=require), JWT_SECRET
-npm install && npm run setup    # root tools + server + client dependencies
-npm run db:setup                # drops & recreates ALL tables, then loads functions, triggers, views, indexes, seed
-npm run dev                     # API :5000 + Vite :5173  (open http://localhost:5173)
-# or one process:  npm start    # builds the client, serves UI + API on http://localhost:5000
-npm run demo                    # runs the 10 demo scenarios against a running API
+npm start
 ```
-If `CREATE EXTENSION btree_gist` / `pgcrypto` is refused, run each once in Neon's SQL editor. Use an empty database: `db:setup` is destructive.
 
-**Logins** (password `password123`): `admin1@uni.edu`, `organizer1@uni.edu`, `student1@uni.edu`, `judge1@uni.edu`, `volunteer1@uni.edu`. Seed dates are relative to the day you run it.
+This builds the frontend and serves the application through the Node.js backend.
 
-## Demo scenarios (UI: Schedule → "+ Schedule event"; the checklist is computed by the database as you type)
-| # | Do this | Expected |
-|---|---|---|
-| 1 | Events → Create event | created |
-| 2 | Log in as `student1`, open an OPEN event → Register | registered; registering twice is rejected |
-| 3 | Schedule *Data Science Workshop*, Computer Lab 1, any free time after its deadline | ACCEPT |
-| 4 | Schedule *Game Dev Jam* in Seminar Hall A during the *Cloud Computing Seminar* | REJECT (venue) |
-| 5 | Schedule *Data Science Workshop* during *Robotics Competition* (any venue) | REJECT (12 participants clash) |
-| 6 | Schedule *Open Mic Evening* with judge Ananya Sharma during *Robotics Competition* | REJECT (judge) |
-| 7 | Schedule *Open Mic Evening* during *AI Hackathon Finals* with 2 Projectors (3 total, 2 in use) | REJECT (resource) |
-| 8 | Schedule *Career Guidance Seminar* (28 registered) in Conference Room (25 seats) | REJECT (capacity) |
-| 9 | Same as 7 but later that day, after the Finals end | ACCEPT |
-| 10 | Schedule list → Delete/Cancel a session; Resources page shows quantities free again | restored |
+## 🧪 Demo & Testing
+
+Run the demo scenarios against a running API:
+
+```bash
+npm run demo
+```
+
+The scenarios demonstrate successful scheduling, venue conflicts, participant clashes, judge conflicts, resource shortages, capacity validation, and resource restoration after cancellation.
+
+## 🗄️ Database Highlights
+
+This project demonstrates practical DBMS concepts, including:
+
+* Entity-Relationship (ER) modeling
+* Relational schema design
+* Functional dependencies
+* Normalization up to 3NF/BCNF
+* Primary keys, foreign keys, and unique constraints
+* Database triggers and stored functions
+* Transactions and rollback
+* Concurrency control and locking
+* Indexing and query optimization
+* Views, joins, aggregate queries, and window functions
+* Recursive queries for event dependencies
+* Scheduling conflict detection
+
+## 📁 Project Structure
+
+```text
+event-scheduler/
+├── client/                  # React + Vite frontend
+├── server/                  # Express backend
+│   └── scripts/             # Demo and testing scripts
+├── database/                # SQL scripts and database logic
+├── .env.example             # Environment variable template
+├── package.json             # Root scripts
+└── README.md                # Project documentation
+```
+
+## 🌐 Deployment
+
+The application is deployed on Render, with PostgreSQL hosted on Neon.
+
+**Try the application:** [Open Event Scheduler](https://event-scheduler-z5hz.onrender.com/schedule)
 
 ---
+
+*Developed as a Database Management Systems (DBMS) course project.*
+
 # DBMS documentation
 ## 1-2. Problem statement and objectives
 Given events, participants, venues, judges, volunteers and resources, create and maintain a **conflict-free schedule while preserving database consistency**. Objectives: model the domain in 3NF; make illegal schedules *impossible to store* (not just discouraged in the UI); make multi-step scheduling atomic; expose database-computed analytics.
